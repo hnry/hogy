@@ -4,9 +4,10 @@ var fs = require('fs')
 
 // just for testing purposes at the moment
 var file_partials = {
-  top: '/views/top.hjs', bottom: '/views/bottom.hjs' };
+  top: '/top.hjs-template', bottom: '/bottom.hjs-template' };
 
 var cache = {}
+  , basePath = path.dirname()
   , partialsCompiled = {};
 
 function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
@@ -15,20 +16,24 @@ function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
 
   this.next = function() {
     var partialName = partialsIndex[at_partial]
-      , partialFile = file_partials(partialsIndex[at_partial]);
+      , partialFile = file_partials[partialsIndex[at_partial]]
+      , cachedPartial;
 
     // done
     if (!partialName || !partialFile) {
-      exports.done(file, options, partialsCompiled, fn);
+      exports.done(file, options, fn);
       return;
     }
 
-    if (options.cache && cache[partialFile]) {
-      partialsCompled[partialName] = cache[partialFile];
+    cachedPartial = exports.getCache(options, basePath + partialFile);
+    if (cachedPartial) {
+      console.log('cache > ' + partialFile);
+      partialsCompiled[partialName] = cachedPartial
       at_partial += 1;
       pp.next();
     } else {
-      exports.compile(function() {
+      exports.compile(basePath + partialFile, options, function(fileCompiled) {
+        partialsCompiled[partialName] = fileCompiled;
         at_partial += 1;
         pp.next();
       });
@@ -36,32 +41,39 @@ function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
   }
 }
 
-exports.checkCache = function(file) {
-  options.cache && cache[file] ? return cache[file] : return false;
+exports.getCache = function(options, file) {
+  if (options.cache && cache[file]) {
+    return cache[file]; } else { return false; }
 }
 
-exports.storeCache = function(file, fileCompiled) {
-  options.cache ? cache[file] = fileCompiled;
+exports.storeCache = function(options, file, fileCompiled) {
+  if (options.cache) cache[file] = fileCompiled;
 }
 
 exports.compile = function(file, options, callback) {
-  fs.readFile(file, 'utf8', function(err, data){
-    if (err) throw new Error('couldn\'t read file: ' + path.dirname() + partialFile);
-    var fileCompiled = hoganjs.generate();
-    exports.storeCache(file, fileCompiled);
-    callback();
+  fs.readFile(file, 'utf8', function(err, data) {
+    if (err) throw new Error('couldn\'t read file: ' + file);
+    var fileCompiled = hoganjs.compile(data);
+    exports.storeCache(options, file, fileCompiled);
+    callback(fileCompiled);
   });
 }
 
-exports.done = function(fileCompiled, options, partialsCompiled, fn) {
-  // compile the original file to be rendered
-  fn(null, fileCompiled(options, partialsCompiled));
+/*
+  after all partials compile then render the original file
+*/
+exports.done = function(file, options, fn) {
+  // TODO check cache before compiling
+  exports.compile(file, options, function(fileCompiled) {
+    fn(null, fileCompiled.render(options, partialsCompiled));
+  });
 }
 
 exports.render = function(file, options, fn) {
   var partialsIndex = [];
+  basePath = path.dirname(file);
 
-  for (var f in file_partials) { fileIndex.unshift(f); }
+  for (var f in file_partials) { partialsIndex.unshift(f); }
 
   var pp = new ProcessPartials(file_partials, partialsIndex, file, options, fn);
   pp.next();
