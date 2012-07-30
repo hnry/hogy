@@ -26,7 +26,11 @@ app.configure('development', function(){
 app.get('/', function(req, res){
   res.render('index', {
     title: 'This is a variable',
-    partial: { partial: 'This will overwrite the original partial tag' }
+    partials: {
+      partial: 'This will overwrite the original partial tag<br /><p>{{>partial2}}</p>'
+      , funcpartial: function() { return 'hi'; }
+      , filepartial: 'partial_called_locally.html'
+    }
   });
 });
 
