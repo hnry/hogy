@@ -21,6 +21,8 @@ function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
       exports.done(file, options, fn);
       return;
     }
+
+    if (partialFile != '/') partialFile = '/' + partialFile
 /* cache code
     cachedPartial = exports.getCache(options, basePath + partialFile);
     if (cachedPartial) {
@@ -51,8 +53,8 @@ exports.storeCache = function(options, file, fileCompiled) {
 exports.compile = function(file, options, callback) {
   fs.readFile(file, 'utf8', function(err, data) {
     if (err) throw new Error('couldn\'t read file: ' + file);
-    var fileParse = hoganjs.parse(hoganjs.scan(data), data);
-    console.log(fileParse);
+    //var fileParse = hoganjs.parse(hoganjs.scan(data), data);
+    //console.log(fileParse);
     var fileCompiled = hoganjs.compile(data);
     //exports.storeCache(options, file, fileCompiled);
     callback(fileCompiled);
@@ -72,6 +74,11 @@ exports.done = function(file, options, fn) {
 exports.render = function(file, options, fn) {
   var partialsIndex = [];
   basePath = path.dirname(file);
+
+  if (!file_partials) {
+    exports.done(file, options, fn);
+    return;
+  }
 
   for (var f in file_partials) { partialsIndex.unshift(f); }
   var pp = new ProcessPartials(file_partials, partialsIndex, file, options, fn);
