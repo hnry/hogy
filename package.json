@@ -1,8 +1,12 @@
 {
-  "name": "hjs-template",
+  "name": "hogy",
   "version": "0.0.1",
   "private": false,
+  "description": "Hogan.js templates for Express 3.x, supports file partials",
+  "author": "hc",
+  "keywords": ["template", "express", "engine", "hogan.js", "hjs", "hoganjs", "mustache", "hogan"],
   "dependencies": {
     "hogan.js": "*"
-  }
+  },
+  "repository": "git://github.com/henwy/hogy.git"
 }
