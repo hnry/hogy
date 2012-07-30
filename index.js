@@ -67,6 +67,11 @@ exports.compile = function(file, options, callback) {
 exports.done = function(file, options, fn) {
   // TODO check cache before compiling
   exports.compile(file, options, function(fileCompiled) {
+    // override partials with local ones
+    for (var partial in options.partials) {
+      console.log(partial);
+      partialsCompiled[partial] = options.partials[partial];
+    }
     fn(null, fileCompiled.render(options, partialsCompiled));
   });
 }
