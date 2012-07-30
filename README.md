@@ -1,8 +1,11 @@
 hjs-template
 ============
 
+hogan.js templating for express 3.x
 
+Supports file partials.
 
+## 
 
 ## License
 (The MIT License)
