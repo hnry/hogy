@@ -2,13 +2,10 @@ var fs = require('fs')
   , hoganjs = require('hogan.js')
   , path = require('path');
 
-// just for testing purposes at the moment
-var file_partials = {
-  top: '/top.hjs-template', bottom: '/bottom.hjs-template' };
-
 var basePath = path.dirname()
 //  , cache = {}
   , partialsCompiled = {};
+var file_partials = {};
 
 function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
   var pp = this
@@ -57,7 +54,7 @@ exports.compile = function(file, options, callback) {
     var fileParse = hoganjs.parse(hoganjs.scan(data), data);
     console.log(fileParse);
     var fileCompiled = hoganjs.compile(data);
-    exports.storeCache(options, file, fileCompiled);
+    //exports.storeCache(options, file, fileCompiled);
     callback(fileCompiled);
   });
 }
@@ -77,9 +74,15 @@ exports.render = function(file, options, fn) {
   basePath = path.dirname(file);
 
   for (var f in file_partials) { partialsIndex.unshift(f); }
-
   var pp = new ProcessPartials(file_partials, partialsIndex, file, options, fn);
   pp.next();
-};
+}
+
+exports.init = function(partialsList) {
+  file_partials = partialsList;
+  // alias to exports.render
+  // makes require statement shorter
+  return exports.render;
+}
 
 exports.__express = exports.render;
