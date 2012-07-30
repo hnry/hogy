@@ -12,15 +12,15 @@ function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
     , at_partial = 0;
 
   this.next = function() {
-    var partialName = partialsIndex[at_partial]
-      , partialFile = file_partials[partialsIndex[at_partial]]
-      , cachedPartial;
-
-    // done
-    if (!partialName || !partialFile) {
+    // check if done
+    if (!partialsIndex[at_partial] || !file_partials[partialsIndex[at_partial]]) {
       exports.done(file, options, fn);
       return;
     }
+
+    var partialName = partialsIndex[at_partial]
+      , partialFile = file_partials[partialsIndex[at_partial]]
+      , cachedPartial;
 
     if (partialFile != '/') partialFile = '/' + partialFile
 /* cache code
@@ -74,11 +74,6 @@ exports.done = function(file, options, fn) {
 exports.render = function(file, options, fn) {
   var partialsIndex = [];
   basePath = path.dirname(file);
-
-  if (!file_partials) {
-    exports.done(file, options, fn);
-    return;
-  }
 
   for (var f in file_partials) { partialsIndex.unshift(f); }
   var pp = new ProcessPartials(file_partials, partialsIndex, file, options, fn);
