@@ -3,7 +3,8 @@ var express = require('express')
 var app = express();
 
 var partials = {
-    partial: 'partial.html'
+    partial: 'partial.html',
+    'partial2': 'another_partial.html'
   }
   , hogy = require('../').init(partials);
 
@@ -12,7 +13,6 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'html');
   app.engine('html', hogy);
-  app.use(express.favicon());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -24,7 +24,10 @@ app.configure('development', function(){
 });
 
 app.get('/', function(req, res){
-  res.render('index', { title: 'This is a variable' });
+  res.render('index', {
+    title: 'This is a variable',
+    partial: { partial: 'This will overwrite the original partial tag' }
+  });
 });
 
 http.createServer(app).listen(app.get('port'), function(){
