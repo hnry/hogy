@@ -2,9 +2,9 @@ var fs = require('fs')
   , hoganjs = require('hogan.js')
   , path = require('path');
 
-var basePath = path.dirname()
 //  , cache = {}
-  , partialsCompiled = {};
+var partialsCompiled = {};
+
 var file_partials = {};
 
 function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
@@ -31,7 +31,7 @@ function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
       at_partial += 1;
       pp.next();
     } else { */
-      exports.compile(basePath + partialFile, options, function(fileCompiled) {
+      exports.compile(options.settings.views + partialFile, options, function(fileCompiled) {
         partialsCompiled[partialName] = fileCompiled;
         at_partial += 1;
         pp.next();
@@ -78,7 +78,6 @@ exports.done = function(file, options, fn) {
 
 exports.render = function(file, options, fn) {
   var partialsIndex = [];
-  basePath = path.dirname(file);
 
   for (var f in file_partials) { partialsIndex.unshift(f); }
   var pp = new ProcessPartials(file_partials, partialsIndex, file, options, fn);
