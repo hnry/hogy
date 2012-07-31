@@ -5,23 +5,24 @@ var fs = require('fs')
 //  , cache = {}
 var partialsCompiled = {};
 
-var file_partials = {};
+var initPartials = {};
 
-function ProcessPartials(partialFiles, partialsIndex, file, options, fn) {
+function ProcessPartials(partials, q, file, options, fn) {
   var pp = this
     , at_partial = 0;
 
   this.next = function() {
     // check if done
-    if (!partialsIndex[at_partial] || !file_partials[partialsIndex[at_partial]]) {
+    if (!q[at_partial] || !partials[q[at_partial]]) {
       exports.done(file, options, fn);
       return;
     }
 
-    var partialName = partialsIndex[at_partial]
-      , partialFile = file_partials[partialsIndex[at_partial]]
+    var partialName = q[at_partial]
+      , partialFile = partials[q[at_partial]]
       , cachedPartial;
 
+    console.log(partialName + '>' + partialFile);
     if (partialFile != '/') partialFile = '/' + partialFile
 /* cache code
     cachedPartial = exports.getCache(options, basePath + partialFile);
@@ -67,25 +68,31 @@ exports.compile = function(file, options, callback) {
 exports.done = function(file, options, fn) {
   // TODO check cache before compiling
   exports.compile(file, options, function(fileCompiled) {
-    // override partials with local ones
-    for (var partial in options.partials) {
-      console.log(partial);
-      partialsCompiled[partial] = options.partials[partial];
-    }
     fn(null, fileCompiled.render(options, partialsCompiled));
   });
 }
 
 exports.render = function(file, options, fn) {
-  var partialsIndex = [];
+  var q = []
+    , partials = {};
 
-  for (var f in file_partials) { partialsIndex.unshift(f); }
-  var pp = new ProcessPartials(file_partials, partialsIndex, file, options, fn);
+  // add local routes partials to the queue
+  for (var tag in options.partials) {
+    q.unshift(tag);
+    partials[tag] = options.partials[tag];
+  }
+  // add initial partials to the queue
+  for (var tag in initPartials) {
+    q.unshift(tag);
+    partials[tag] = initPartials[tag];
+  }
+
+  var pp = new ProcessPartials(partials, q, file, options, fn);
   pp.next();
 }
 
 exports.init = function(partialsList) {
-  file_partials = partialsList;
+  initPartials = partialsList;
   // alias to exports.render
   // makes require statement shorter
   return exports.render;

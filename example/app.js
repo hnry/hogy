@@ -28,7 +28,7 @@ app.get('/', function(req, res){
     title: 'This is a variable',
     partials: {
       partial: 'This will overwrite the original partial tag<br /><p>{{>partial2}}</p>'
-      , funcpartial: function() { return 'hi'; }
+      //, funcpartial: function() { return 'hi'; }
       , filepartial: 'partial_called_locally.html'
     }
   });
