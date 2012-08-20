@@ -42,7 +42,7 @@ exports.getCache = function(partial, options, filemodtime) {
     return hoganjs.cache[partial + '||' + !!options.asString];
 
   } else {
-    if (options.cache) console.log('no cache');
+    //if (options.cache) console.log('no cache');
     if (!options.cache) hoganjs.cache = {}; // no caching
     return false;
   }
