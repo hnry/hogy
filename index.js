@@ -42,7 +42,7 @@ exports.getCache = function(partial, options, filemodtime) {
     return hoganjs.cache[partial + '||' + !!options.asString];
 
   } else {
-    console.log('no cache');
+    //if (options.cache) console.log('no cache');
     if (!options.cache) hoganjs.cache = {}; // no caching
     return false;
   }
@@ -53,7 +53,6 @@ exports.getCache = function(partial, options, filemodtime) {
 */
 exports.updateCache = function(fname, ftext, fmtime, options) {
   if (options.cache) {
-    console.log('updating cache - ' + fname);
     fileCache[fname] = {text: ftext, mtime: fmtime};
   }
 }
@@ -71,7 +70,6 @@ exports.compile = function(partial, options, fixpath, callback) {
       if (cache) {
         callback(cache)
       } else {
-        console.log('compiling non-file partial');
         var compiled = hoganjs.compile(partial);
         callback(compiled);
       }
@@ -124,12 +122,9 @@ exports.render = function(file, options, fn) {
   pp.next();
 }
 
-/*
-  also alias to exports.render
-*/
 exports.init = function(partialsList) {
   initPartials = partialsList;
-  return exports.render;
+  return exports.render; // also alias to exports.render
 }
 
 exports.__express = exports.render;
