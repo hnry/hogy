@@ -35,12 +35,15 @@ function ProcessPartials(partials, q, file, options, fn) {
 */
 exports.getCache = function(partial, options, filemodtime) {
   filemodtime = filemodtime || undefined
-  if (options.cache && filemodtime) {
-    if (fileCache[partial] && fileCache[partial].mtime === filemodtime) return hoganjs.cache[fileCache[partial].text + '||' + !!options.asString];
-  } else if (options.cache && hoganjs.cache[partial]) {
+  if (options.cache && filemodtime && fileCache[partial] && fileCache[partial].mtime === filemodtime) {
+    return hoganjs.cache[fileCache[partial].text + '||' + !!options.asString];
+
+  } else if (options.cache && hoganjs.cache[partial + '||' + !!options.asString]) {
     return hoganjs.cache[partial + '||' + !!options.asString];
+
   } else {
-    hoganjs.cache = {}; // no caching
+    console.log('no cache');
+    if (!options.cache) hoganjs.cache = {}; // no caching
     return false;
   }
 }
@@ -50,7 +53,7 @@ exports.getCache = function(partial, options, filemodtime) {
 */
 exports.updateCache = function(fname, ftext, fmtime, options) {
   if (options.cache) {
-    console.log('updating cache');
+    console.log('updating cache - ' + fname);
     fileCache[fname] = {text: ftext, mtime: fmtime};
   }
 }
@@ -68,6 +71,7 @@ exports.compile = function(partial, options, fixpath, callback) {
       if (cache) {
         callback(cache)
       } else {
+        console.log('compiling non-file partial');
         var compiled = hoganjs.compile(partial);
         callback(compiled);
       }
