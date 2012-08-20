@@ -1,7 +1,8 @@
 var fs = require('fs')
   , hoganjs = require('hogan.js');
 
-var partialsCompiled = {}
+var cache = {}
+  , partialsCompiled = {} // partials required to render file
   , initPartials = {};
 
 function ProcessPartials(partials, q, file, options, fn) {
@@ -32,19 +33,25 @@ function ProcessPartials(partials, q, file, options, fn) {
 
   partial param can be file name or text of partial
 */
-exports.checkCache = function(partial, options, filemodtime) {
+exports.getCache = function(partial, options, filemodtime) {
   filemodtime = filemodtime || undefined
-  if (options.cache && hoganjs.cache[partial]) {
-    return hoganjs.cache[partial];
+  if (options.cache && filemodtime) {
+    if (cache[partial] && cache[partial].mtime === filemodtime) return hoganjs.cache[cache[partial].text + '||' + !!options.asString];
+  } else if (options.cache && hoganjs.cache[partial]) {
+    return hoganjs.cache[partial + '||' + !!options.asString];
   } else {
     return false;
   }
 }
 
 /*
-  updates cache
+  updates hogy cache, only applies to files
 */
-exports.storeCache = function() {
+exports.updateCache = function(fname, ftext, fmtime, options) {
+  if (options.cache) {
+    console.log('updating cache');
+    cache[fname] = {text: ftext, mtime: fmtime};
+  }
 }
 
 exports.compile = function(partial, options, fixpath, callback) {
@@ -56,7 +63,7 @@ exports.compile = function(partial, options, fixpath, callback) {
   fs.stat(file, function(err, stat){
     if (err) {
       // not a file, compile as a string or function
-      cache = checkCache(partial, options);
+      cache = exports.getCache(partial, options);
       if (cache) {
         callback(cache)
       } else {
@@ -64,7 +71,7 @@ exports.compile = function(partial, options, fixpath, callback) {
         callback(compiled);
       }
     } else {
-      cache = checkCache(file, options, stat.mtime);
+      cache = exports.getCache(file, options, Date.parse(stat.mtime));
       if (cache) {
         callback(cache);
       } else {
@@ -74,6 +81,7 @@ exports.compile = function(partial, options, fixpath, callback) {
           } else {
             //var fileParse = hoganjs.parse(hoganjs.scan(data), data);
             var compiled = hoganjs.compile(data);
+            exports.updateCache(file, data, Date.parse(stat.mtime), options);
             callback(compiled);
           }
         });
