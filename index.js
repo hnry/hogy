@@ -59,33 +59,29 @@ exports.updateCache = function(fname, ftext, fmtime, options) {
 
 exports.compile = function(partial, options, fixpath, callback) {
   var file = options.settings.views
-    , cache;
+    , cache
+    , compiled;
   // fix path for partials only
   (fixpath && partial != '/') ? file = file + '/' + partial : file = partial;
 
-  fs.stat(file, function(err, stat){
-    if (err) {
-      // not a file, compile as a string or function
-      cache = exports.getCache(partial, options);
-      if (cache) {
-        callback(cache)
-      } else {
-        var compiled = hoganjs.compile(partial);
-        callback(compiled);
-      }
+  fs.stat(file, function(statErr, stat){
+    // if statErr, not a file, compile as a string
+    statErr ? cache = exports.getCache(partial, options) ? cache = exports.getCache(file, options, Date.parse(stat.mtime));
+
+    if (cache) {
+      callback(cache);
     } else {
-      cache = exports.getCache(file, options, Date.parse(stat.mtime));
-      if (cache) {
-        callback(cache);
+      if (statErr) {
+        compiled = hoganjs.compile(partial);
+        callback(compiled);
       } else {
         fs.readFile(file, 'utf8', function(err, data) {
           if (err) {
             throw new Error(err); // file read error
           } else {
-            //var fileParse = hoganjs.parse(hoganjs.scan(data), data);
-            var compiled = hoganjs.compile(data);
-            exports.updateCache(file, data, Date.parse(stat.mtime), options);
+            compiled = hoganjs.compile(data); // // hoganjs.parse(hoganjs.scan(data), data);
             callback(compiled);
+            exports.updateCache(file, data, Date.parse(stat.mtime), options);
           }
         });
       }
