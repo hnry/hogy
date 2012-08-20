@@ -14,13 +14,13 @@ Example app.js:
 var partials = {
   top: 'layout-top.hogan', bottom: 'layout-bottom.hogan' };
 
-var hoganjs = require('hogy').init(partials);
+var hogy = require('hogy').init(partials);
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'hogan');
-  app.engine('hogan', hoganjs);
+  app.engine('hogan', hogy);
 
 ...
 ```
@@ -31,6 +31,7 @@ If you don't have any file partials, you can simply just do:
     var hjs = require('hogy').init();
 ```
 
+See example for more complete usage.
 
 ## License
 

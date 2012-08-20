@@ -34,7 +34,7 @@ function ProcessPartials(partials, q, file, options, fn) {
   partial param can be file name or text of partial
 */
 exports.getCache = function(partial, options, filemodtime) {
-  filemodtime = filemodtime || undefined
+  filemodtime = filemodtime || undefined;
   if (options.cache && filemodtime && fileCache[partial] && fileCache[partial].mtime === filemodtime) {
     return hoganjs.cache[fileCache[partial].text + '||' + !!options.asString];
 

@@ -1,3 +1,9 @@
+## 0.0.4
+
+  * fix partialsCompiled to be local to pp object
+
+  * code clean up; minor bug fixes
+
 ## 0.0.3
 
   * performance improvements (less file reads), better caching
