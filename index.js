@@ -42,7 +42,7 @@ exports.getCache = function(partial, options, filemodtime) {
     return hoganjs.cache[partial + '||' + !!options.asString];
 
   } else {
-    //if (options.cache) console.log('no cache');
+    if (options.cache) console.log('no cache');
     if (!options.cache) hoganjs.cache = {}; // no caching
     return false;
   }
@@ -66,7 +66,7 @@ exports.compile = function(partial, options, fixpath, callback) {
 
   fs.stat(file, function(statErr, stat){
     // if statErr, not a file, compile as a string
-    statErr ? cache = exports.getCache(partial, options) ? cache = exports.getCache(file, options, Date.parse(stat.mtime));
+    statErr ? cache = exports.getCache(partial, options) : cache = exports.getCache(file, options, Date.parse(stat.mtime));
 
     if (cache) {
       callback(cache);
@@ -79,7 +79,7 @@ exports.compile = function(partial, options, fixpath, callback) {
           if (err) {
             throw new Error(err); // file read error
           } else {
-            compiled = hoganjs.compile(data); // // hoganjs.parse(hoganjs.scan(data), data);
+            compiled = hoganjs.compile(data); // hoganjs.parse(hoganjs.scan(data), data);
             callback(compiled);
             exports.updateCache(file, data, Date.parse(stat.mtime), options);
           }
