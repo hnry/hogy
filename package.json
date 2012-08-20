@@ -1,6 +1,6 @@
 {
   "name": "hogy",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
   "description": "Hogan.js templates for Express 3.x, supports file partials",
   "author": "hc",
