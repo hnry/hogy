@@ -11,7 +11,7 @@ function ProcessPartials(partials, q, file, options, fn) {
   this.next = function() {
     // check if done
     if (!q[at_partial] || !partials[q[at_partial]]) {
-      exports.done(file, options, fn);
+      exports.done(file, options, pp, fn);
       return;
     }
 
@@ -31,24 +31,31 @@ exports.compile = function(partial, options, fixpath, callback) {
   // fix path for partials only
   (fixpath && partial != '/') ? file = file + '/' + partial : file = partial;
 
-  fs.readFile(file, 'utf8', function(err, data) {
+  fs.stat(file, function(err, stat){
     if (err) {
-      //console.log(partial);
       // not a file, compile as a string or function
       var compiled = hoganjs.compile(partial);
       callback(compiled);
     } else {
-      //var fileParse = hoganjs.parse(hoganjs.scan(data), data);
-      var compiled = hoganjs.compile(data);
-      callback(compiled);
-    }
+      console.log(file + '---' + stat.mtime);
+      fs.readFile(file, 'utf8', function(err, data) {
+       if (err) {
+        throw new Error(err);
+       } else {
+          //var fileParse = hoganjs.parse(hoganjs.scan(data), data);
+          var compiled = hoganjs.compile(data);
+          callback(compiled);
+       }
+     });
+   }
   });
 }
 
 /*
   after all partials compile then render the original file
 */
-exports.done = function(file, options, fn) {
+exports.done = function(file, options, pp, fn) {
+  delete(pp); // pp obj no longer needed
   exports.compile(file, options, false, function(fileCompiled) {
     fn(null, fileCompiled.render(options, partialsCompiled));
   });
@@ -73,10 +80,11 @@ exports.render = function(file, options, fn) {
   pp.next();
 }
 
+/*
+  also alias to exports.render
+*/
 exports.init = function(partialsList) {
   initPartials = partialsList;
-  // alias to exports.render
-  // makes require statement shorter
   return exports.render;
 }
 
