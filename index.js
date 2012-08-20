@@ -1,7 +1,7 @@
 var fs = require('fs')
   , hoganjs = require('hogan.js');
 
-var cache = {}
+var fileCache = {}
   , partialsCompiled = {} // partials required to render file
   , initPartials = {};
 
@@ -36,10 +36,11 @@ function ProcessPartials(partials, q, file, options, fn) {
 exports.getCache = function(partial, options, filemodtime) {
   filemodtime = filemodtime || undefined
   if (options.cache && filemodtime) {
-    if (cache[partial] && cache[partial].mtime === filemodtime) return hoganjs.cache[cache[partial].text + '||' + !!options.asString];
+    if (fileCache[partial] && fileCache[partial].mtime === filemodtime) return hoganjs.cache[fileCache[partial].text + '||' + !!options.asString];
   } else if (options.cache && hoganjs.cache[partial]) {
     return hoganjs.cache[partial + '||' + !!options.asString];
   } else {
+    hoganjs.cache = {}; // no caching
     return false;
   }
 }
@@ -50,7 +51,7 @@ exports.getCache = function(partial, options, filemodtime) {
 exports.updateCache = function(fname, ftext, fmtime, options) {
   if (options.cache) {
     console.log('updating cache');
-    cache[fname] = {text: ftext, mtime: fmtime};
+    fileCache[fname] = {text: ftext, mtime: fmtime};
   }
 }
 
