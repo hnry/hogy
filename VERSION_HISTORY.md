@@ -1,3 +1,9 @@
+## 0.0.3
+
+  * performance improvements (less file reads), better caching
+
+  * make hogan.js caching follow express options.cache
+
 ## 0.0.2
 
   * added support for local route partials, they should have priority over any other partial
