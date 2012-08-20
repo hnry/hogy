@@ -2,12 +2,12 @@ var fs = require('fs')
   , hoganjs = require('hogan.js');
 
 var fileCache = {}
-  , partialsCompiled = {} // partials required to render file
   , initPartials = {};
 
 function ProcessPartials(partials, q, file, options, fn) {
   var pp = this
     , at_partial = 0;
+  this.partialsCompiled = {}; // previously completed partials required to render file
 
   this.next = function() {
     // check if done
@@ -20,7 +20,7 @@ function ProcessPartials(partials, q, file, options, fn) {
       , partialFile = partials[q[at_partial]];
 
       exports.compile(partialFile, options, true, function(fileCompiled) {
-        partialsCompiled[partialName] = fileCompiled;
+        pp.partialsCompiled[partialName] = fileCompiled;
         at_partial += 1;
         pp.next();
       });
@@ -93,9 +93,9 @@ exports.compile = function(partial, options, fixpath, callback) {
   after all partials compile then render the original file
 */
 exports.done = function(file, options, pp, fn) {
-  delete(pp); // pp obj no longer needed
   exports.compile(file, options, false, function(fileCompiled) {
-    fn(null, fileCompiled.render(options, partialsCompiled));
+    fn(null, fileCompiled.render(options, pp.partialsCompiled));
+    delete(pp); // pp obj no longer needed
   });
 }
 
