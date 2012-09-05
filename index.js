@@ -57,12 +57,26 @@ exports.updateCache = function(fname, ftext, fmtime, options) {
   }
 }
 
+exports.testFileExt = function(str, ext) {
+  var strLen = str.length - 1 // -1 to account for 0
+    , extLen = ext.length - 1
+    , strIndex = strLen - extLen;
+  for (var i = 0; i < extLen; i++) {
+    if (ext[i] != str[strIndex]) return false;
+    strIndex += 1;
+  }
+  return true;
+}
+
 exports.compile = function(partial, options, fixpath, callback) {
   var file = options.settings.views
     , cache
     , compiled;
   // fix path for partials only
   (fixpath && partial != '/') ? file = file + '/' + partial : file = partial;
+
+  // add file extension if none
+  if (!exports.testFileExt(file, options.settings['view engine'])) file += '.' + options.settings['view engine'];
 
   fs.stat(file, function(statErr, stat){
     // if statErr, not a file, compile as a string
@@ -95,7 +109,7 @@ exports.compile = function(partial, options, fixpath, callback) {
 exports.done = function(file, options, pp, fn) {
   exports.compile(file, options, false, function(fileCompiled) {
     fn(null, fileCompiled.render(options, pp.partialsCompiled));
-    delete(pp); // pp obj no longer needed
+    delete pp; // pp obj no longer needed
   });
 }
 

@@ -1,3 +1,7 @@
+## 0.0.5
+
+  * file extension when declaring file partials is optional
+
 ## 0.0.4
 
   * fix partialsCompiled to be local to pp object
