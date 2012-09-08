@@ -2,6 +2,8 @@
 
   * file extension when declaring file partials is optional
 
+  * bug fix, pass options to hogan
+
 ## 0.0.4
 
   * fix partialsCompiled to be local to pp object

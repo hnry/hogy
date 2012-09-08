@@ -86,7 +86,7 @@ exports.compile = function(partial, options, fixpath, callback) {
       callback(cache);
     } else {
       if (statErr) {
-        compiled = hoganjs.compile(partial);
+        compiled = hoganjs.compile(partial, options);
         callback(compiled);
       } else {
         fs.readFile(file, 'utf8', function(err, data) {

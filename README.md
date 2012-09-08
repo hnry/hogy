@@ -12,7 +12,7 @@ Example app.js:
 ...
 
 var partials = {
-  top: 'layout-top.hogan', bottom: 'layout-bottom.hogan' };
+  top: 'layout-top', bottom: 'layout-bottom' };
 
 var hogy = require('hogy').init(partials);
 
