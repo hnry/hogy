@@ -93,7 +93,7 @@ exports.compile = function(partial, options, fixpath, callback) {
           if (err) {
             throw new Error(err); // file read error
           } else {
-            compiled = hoganjs.compile(data); // hoganjs.parse(hoganjs.scan(data), data);
+            compiled = hoganjs.compile(data, options); // hoganjs.parse(hoganjs.scan(data), data);
             callback(compiled);
             exports.updateCache(file, data, Date.parse(stat.mtime), options);
           }
