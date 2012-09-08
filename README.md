@@ -1,7 +1,7 @@
 # hogy
 hogan.js templates for express 3.x
 
-Supports file partials.
+Supports file partials. Ability to pass partials to all views in or just to specific routes.
 
 ## Usage
 
@@ -10,8 +10,9 @@ In order to use file partials, you have to make hogy aware of them. To do this, 
 Example app.js:
 ```
 ...
-
-var partials = { top: 'layout-top', bottom: 'layout-bottom' }; // file extension optional
+// partials declared here will be available to all views
+// file extension optional
+var partials = { top: 'layout-top', bottom: 'layout-bottom' };
 
 var hogy = require('hogy').init(partials); // setup hogy
 
@@ -23,12 +24,14 @@ app.configure(function(){
 
 ...
 ```
-'hogan' in this instance is whatever you want your view's file extension to be.
 
-If you don't have any file partials, you can simply just do:
+If you don't have any file partials you want available to all views, you can simply just do:
 ```
     var hogy = require('hogy').init();
 ```
+
+hogy also supports local partials specific for each route.
+Local partials can override partials declared during setup.
 
 See example for more complete usage.
 

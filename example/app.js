@@ -3,8 +3,8 @@ var express = require('express')
 var app = express();
 
 var partials = {
-    partial: 'partial', // specifying file extension optional
-    'partial2': 'another_partial.html'
+    str_partial: 'partial', // specifying file extension optional
+    partial2: 'another_partial.html'
   }
   , hogy = require('../').init(partials);
 
