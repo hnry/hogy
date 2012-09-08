@@ -11,15 +11,14 @@ Example app.js:
 ```
 ...
 
-var partials = {
-  top: 'layout-top', bottom: 'layout-bottom' };
+var partials = { top: 'layout-top', bottom: 'layout-bottom' }; // file extension optional
 
-var hogy = require('hogy').init(partials);
+var hogy = require('hogy').init(partials); // setup hogy
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
-  app.set('view engine', 'hogan');
+  app.set('view engine', 'hogan'); // 'hogan' is whatever file extension you want
   app.engine('hogan', hogy);
 
 ...
@@ -28,7 +27,7 @@ app.configure(function(){
 
 If you don't have any file partials, you can simply just do:
 ```
-    var hjs = require('hogy').init();
+    var hogy = require('hogy').init();
 ```
 
 See example for more complete usage.
