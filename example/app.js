@@ -3,7 +3,7 @@ var express = require('express')
 var app = express();
 
 var partials = {
-    partial: 'partial.html',
+    partial: 'partial', // specifying file extension optional
     'partial2': 'another_partial.html'
   }
   , hogy = require('../').init(partials);
@@ -26,8 +26,9 @@ app.configure('development', function(){
 app.get('/', function(req, res){
   res.render('index', {
     title: 'This is a variable',
+    // local partials support
     partials: {
-      partial: 'This will overwrite the original partial tag<br /><h3>another_partial.html called from local partial:</h3>{{>partial2}}'
+        str_partial: 'This will overwrite the original str_partial tag<br /><h3>another_partial.html called from local partial (str_partial):</h3>{{>partial2}}'
       , filepartial: 'partial_called_locally.html'
     }
   });
