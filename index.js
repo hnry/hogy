@@ -42,7 +42,6 @@ exports.getCache = function(partial, options, filemodtime) {
     return hoganjs.cache[partial + '||' + !!options.asString];
 
   } else {
-    //if (options.cache) console.log('no cache');
     if (!options.cache) hoganjs.cache = {}; // no caching
     return false;
   }
@@ -109,7 +108,6 @@ exports.compile = function(partial, options, fixpath, callback) {
 exports.done = function(file, options, pp, fn) {
   exports.compile(file, options, false, function(fileCompiled) {
     fn(null, fileCompiled.render(options, pp.partialsCompiled));
-    delete pp; // pp obj no longer needed
   });
 }
 
@@ -119,12 +117,12 @@ exports.render = function(file, options, fn) {
 
   // add initial partials to the queue
   for (var tag in initPartials) {
-    q.unshift(tag);
+    q.push(tag);
     partials[tag] = initPartials[tag];
   }
   // add local routes partials to the queue
   for (var tag in options.partials) {
-    q.unshift(tag);
+    q.push(tag);
     partials[tag] = options.partials[tag];
   }
 

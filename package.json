@@ -1,12 +1,16 @@
 {
   "name": "hogy",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": false,
   "description": "Hogan.js templates for Express 3.x, supports file partials",
-  "author": "hc",
+  "author": "lovebear",
   "keywords": ["template", "express", "engine", "hogan.js", "hjs", "hoganjs", "mustache", "hogan"],
   "dependencies": {
     "hogan.js": "*"
   },
-  "repository": "git://github.com/henwy/hogy.git"
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "repository": "git://github.com/lovebear/hogy.git"
 }

@@ -1,3 +1,7 @@
+## 0.0.6
+
+  * minor performance improvements
+
 ## 0.0.5
 
   * file extension when declaring file partials is optional
